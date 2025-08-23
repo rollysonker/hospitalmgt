@@ -11,6 +11,7 @@ import com.rolly.practice.hospitalmgt.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +28,9 @@ public class AppointmentService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final ModelMapper modelMapper;
+    private final RedisService redisService;
+    private final EmailService emailService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Transactional
     @Secured("ROLE_PATIENT")
@@ -46,8 +50,21 @@ public class AppointmentService {
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
         patient.getAppointments().add(appointment); // to maintain consistency
-
+        doctor.getAppointments().add(appointment); // to maintain consistency
         appointment = appointmentRepository.save(appointment);
+        redisService.set("doctorId_"+doctor.getId(), doctor.getAppointments(), 300l);
+
+        try{
+            kafkaTemplate.send("appointment-mails", "camroonrolly@gmail.com", "test email body");
+        }catch (Exception e){
+            emailService.sendEmail("camroonrolly@gmail.com", "Hospital Management test email", "test body");
+        }
+
+
+        //"\"Appointment(id=4, appointmentTime=2025-08-29T15:45:41.424703, reason=fever)\
+
+
+
         return modelMapper.map(appointment, AppointmentResponseDto.class);
     }
 
@@ -67,7 +84,13 @@ public class AppointmentService {
     @PreAuthorize("hasRole('ADMIN') OR (hasRole('DOCTOR') AND #doctorId == authentication.principal.id)")
     public List<AppointmentResponseDto> getAllAppointmentsOfDoctor(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow();
-
+        Doctor docApp = redisService.get("doctorId_"+doctor.getId(), Doctor.class);
+        if(docApp != null){
+            return docApp.getAppointments()
+                .stream()
+                .map(appointment -> modelMapper.map(appointment, AppointmentResponseDto.class))
+                .collect(Collectors.toList());
+        }
         return doctor.getAppointments()
                 .stream()
                 .map(appointment -> modelMapper.map(appointment, AppointmentResponseDto.class))

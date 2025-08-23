@@ -1,6 +1,7 @@
 package com.rolly.practice.hospitalmgt.entity;
 import com.rolly.practice.hospitalmgt.entity.type.AuthProviderType;
 import com.rolly.practice.hospitalmgt.entity.type.RoleType;
+import com.rolly.practice.hospitalmgt.security.RolePermissionMapping;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,13 +46,13 @@ public class User implements UserDetails {
 //                .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
 //                .collect(Collectors.toSet());
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-//        roles.forEach(
-//                role -> {
-//                    Set<SimpleGrantedAuthority> permissions = RolePermissionMapping.getAuthoritiesForRole(role);
-//                    authorities.addAll(permissions);
-//                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.name()));
-//                }
-//        );
+        roles.forEach(
+                role -> {
+                    Set<SimpleGrantedAuthority> permissions = RolePermissionMapping.getAuthoritiesForRole(role);
+                    authorities.addAll(permissions);
+                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.name()));
+                }
+        );
         return authorities;
     }
 }

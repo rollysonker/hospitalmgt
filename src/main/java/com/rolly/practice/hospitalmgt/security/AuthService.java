@@ -56,7 +56,7 @@ public class AuthService {
                 .providerType(authProviderType)
                 .roles(signupRequestDto.getRoles()) // Role.PATIENT
                 .build();
-
+        //user.getRoles().add(RoleType.DOCTOR);
         if(authProviderType == AuthProviderType.EMAIL) {
             user.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
         }
@@ -69,6 +69,7 @@ public class AuthService {
                 .user(user)
                 .build();
         patientRepository.save(patient);
+
 
        return user;
     }

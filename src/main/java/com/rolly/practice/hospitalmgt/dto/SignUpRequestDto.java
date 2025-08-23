@@ -16,4 +16,6 @@ public class SignUpRequestDto {
     private String name;
 
     private Set<RoleType> roles = new HashSet<>();
+
+    //add validations
 }
