@@ -1,5 +1,7 @@
 package com.rolly.practice.hospitalmgt.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,5 +33,6 @@ public class Appointment {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @JoinColumn(nullable = false)
+    @JsonBackReference
     private Doctor doctor;
 }

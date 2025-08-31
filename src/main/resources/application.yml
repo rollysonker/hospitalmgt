@@ -8,4 +8,42 @@ spring:
     data:
       host: localhost
       port: 6379
+  resilience4j:
+    circuitbreaker:
+      instances:
+        paymentService:
+          registerHealthIndicator: true
+          slidingWindowSize: 10
+          failureRateThreshold: 50
+          waitDurationInOpenState: 10s
+          permittedNumberOfCallsInHalfOpenState: 3
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sonkerrolly@gmail.com
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: appointment-mails-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages:com.rolly.practice.hospitalmgt
+    properties:
+      session:
+        timeout:
+          ms: 45000
 

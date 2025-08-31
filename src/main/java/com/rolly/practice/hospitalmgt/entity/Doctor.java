@@ -1,5 +1,6 @@
 package com.rolly.practice.hospitalmgt.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class Doctor {
     private Set<Department> departments = new HashSet<>();
 
     @OneToMany(mappedBy = "doctor")
+    @JsonManagedReference
     private List<Appointment> appointments = new ArrayList<>();
 
 }

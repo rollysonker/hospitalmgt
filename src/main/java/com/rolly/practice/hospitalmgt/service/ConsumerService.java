@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class ConsumerService {
 
     @Autowired
-    private EmailService emailService;
+    //private EmailService emailService;
 
     @KafkaListener(topics = "appointment-mails", groupId = "appointment-mails-group")
     public void consume() {
@@ -17,6 +17,7 @@ public class ConsumerService {
     }
 
     private void sendEmail() {
-        emailService.sendEmail("camroonrolly@gmail.com", "Hospital Management test email", "test body");
+        //emailService.sendEmail("camroonrolly@gmail.com", "Hospital Management test email", "test body");
+        System.out.println("email sent");
     }
 }

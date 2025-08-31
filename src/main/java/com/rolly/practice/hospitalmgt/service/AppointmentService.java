@@ -29,7 +29,7 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final ModelMapper modelMapper;
     private final RedisService redisService;
-    private final EmailService emailService;
+    //private final EmailService emailService;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Transactional
@@ -57,7 +57,10 @@ public class AppointmentService {
         try{
             kafkaTemplate.send("appointment-mails", "camroonrolly@gmail.com", "test email body");
         }catch (Exception e){
-            emailService.sendEmail("camroonrolly@gmail.com", "Hospital Management test email", "test body");
+            //emailService.sendEmail("camroonrolly@gmail.com", "Hospital Management test email", "test body");
+
+
+            System.out.println("email service not working, email sent");
         }
 
 
